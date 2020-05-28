@@ -2,6 +2,7 @@ const grid = document.querySelector('.grid');
 let width = 10;
 let bombAmount = 20;
 let squares = [];
+let isGameOver = false;
 
 // create board
 function createBoard() {
@@ -48,9 +49,68 @@ createBoard();
 
 // click on square actions
 function click(square) {
+    if(square.classList.contains('checked') || square.classList.contains('flag') || isGameOver) return;
     if(square.classList.contains('bomb')) {
-        alert('Game Over!');
+        console.log('Game Over!');
+    } else {
+        let total = parseInt(square.getAttribute('data'));
+        if(total !== 0) {
+            square.classList.add('checked');
+            square.innerHTML = total;
+            return;
+        }
+        checkSquare(square, parseInt(square.id));
     }
+    square.classList.add('checked');
+}
+
+// check neighbouring squares once square is clicked
+function checkSquare(square, currentId) {
+    const isLeftEdge = currentId % width === 0;
+    const isRightEdge = currentId % width === width - 1;
+
+    setTimeout( () => {
+        if (currentId > 0 && !isLeftEdge) {
+            const newId = parseInt(currentId) - 1;
+            const newSquare = document.getElementById(newId.toString());
+            click(newSquare);
+        }
+        if (currentId > 9 && !isRightEdge) {
+            const newId = parseInt(currentId) + 1 - width;
+            const newSquare = document.getElementById(newId.toString());
+            click(newSquare);
+        }
+        if (currentId > 10) {
+            const newId = parseInt(currentId) - width;
+            const newSquare = document.getElementById(newId.toString());
+            click(newSquare);
+        }
+        if (currentId > 11 && !isLeftEdge) {
+            const newId = parseInt(currentId) - 1 - width;
+            const newSquare = document.getElementById(newId.toString());
+            click(newSquare);
+        }
+        if (currentId < 98 && !isRightEdge) {
+            const newId = parseInt(currentId) + 1;
+            const newSquare = document.getElementById(newId.toString());
+            click(newSquare);
+        }
+        if (currentId < 90 && !isLeftEdge) {
+            const newId = parseInt(currentId) - 1 + width;
+            const newSquare = document.getElementById(newId.toString());
+            click(newSquare);
+        }
+        if (currentId < 88 && !isRightEdge) {
+            const newId = parseInt(currentId) + 1 + width;
+            const newSquare = document.getElementById(newId.toString());
+            click(newSquare);
+        }
+        if (currentId < 89) {
+            const newId = parseInt(currentId) + width;
+            const newSquare = document.getElementById(newId.toString());
+            click(newSquare);
+        }
+    }, 10);
 }
 
 function shuffle(a) {
