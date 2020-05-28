@@ -62,6 +62,7 @@ function addFlag(square) {
             square.classList.add('flag');
             square.innerHTML = '<i class="fas fa-flag"></i>';
             flags++;
+            checkForWin();
         } else {
             square.classList.remove('flag');
             square.innerHTML = '';
@@ -147,6 +148,19 @@ function gameOver(square) {
             square.style.color = 'black';
         }
     })
+}
+
+function checkForWin() {
+    let matches = 0;
+    for(let i = 0; i < squares.length; i++) {
+        if(squares[i].classList.contains('flag') && squares[i].classList.contains('bomb')) {
+            matches++;
+        }
+        if(matches === bombAmount) {
+            console.log('YOU WIN!');
+            isGameOver = true;
+        }
+    }
 }
 
 function shuffle(a) {
