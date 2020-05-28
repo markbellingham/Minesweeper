@@ -51,7 +51,7 @@ createBoard();
 function click(square) {
     if(square.classList.contains('checked') || square.classList.contains('flag') || isGameOver) return;
     if(square.classList.contains('bomb')) {
-        console.log('Game Over!');
+        gameOver(square);
     } else {
         let total = parseInt(square.getAttribute('data'));
         if(total !== 0) {
@@ -111,6 +111,18 @@ function checkSquare(square, currentId) {
             click(newSquare);
         }
     }, 10);
+}
+
+function gameOver(square) {
+    console.log('BOOM! Game Over!');
+    isGameOver = true;
+
+    // show ALL the bombs
+    squares.forEach( square => {
+        if(square.classList.contains('bomb')) {
+            square.innerHTML = '<i class="fas fa-bomb"></i>';
+        }
+    })
 }
 
 function shuffle(a) {
