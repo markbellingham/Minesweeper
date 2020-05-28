@@ -3,6 +3,7 @@ let width = 10;
 let bombAmount = 20;
 let squares = [];
 let isGameOver = false;
+let flags = 0;
 
 // create board
 function createBoard() {
@@ -23,6 +24,12 @@ function createBoard() {
         square.addEventListener('click', function(e) {
             click(square);
         });
+
+        // ctrl and left click
+        square.oncontextmenu = function(e) {
+            e.preventDefault();
+            addFlag(square);
+        }
     }
 
     // add numbers
@@ -46,6 +53,22 @@ function createBoard() {
     }
 }
 createBoard();
+
+// add Flag with right click
+function addFlag(square) {
+    if(isGameOver) return;
+    if(!square.classList.contains('checked') && (flags < bombAmount)) {
+        if(!square.classList.contains('flag')) {
+            square.classList.add('flag');
+            square.innerHTML = '<i class="fas fa-flag"></i>';
+            flags++;
+        } else {
+            square.classList.remove('flag');
+            square.innerHTML = '';
+            flags--;
+        }
+    }
+}
 
 // click on square actions
 function click(square) {
@@ -121,6 +144,7 @@ function gameOver(square) {
     squares.forEach( square => {
         if(square.classList.contains('bomb')) {
             square.innerHTML = '<i class="fas fa-bomb"></i>';
+            square.style.color = 'black';
         }
     })
 }
