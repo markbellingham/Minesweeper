@@ -1,9 +1,33 @@
+body {
+    font-family: "Fira Code", "DejaVu Sans", sans-serif;
+}
+
+.game {
+    margin-left: 35%;
+    position: relative;
+    float: left;
+    margin-top: 30px;
+}
+
 .grid {
-    height: 400px;
-    width: 400px;
+    height: 420px;
+    width: 420px;
     display: flex;
     flex-wrap: wrap;
-    background-color: grey;
+    background-color: lightgray;
+}
+
+.controls {
+    position: relative;
+    float: left;
+    top: 30px;
+    left: 30px;
+}
+.controls > * {
+    position: relative;
+    float: left;
+    clear: both;
+    margin-top: 10px;
 }
 
 .grid div {
@@ -12,16 +36,31 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    border: 1px solid white;
 }
 
 .checked {
-    background-color: red;
-}
-
-.bomb {
-    background-color: orange;
+    background-color: white;
 }
 
 .flag {
+    color: red;
+}
+
+.modal {
+    position: absolute;
+    top: 20%;
+    left: 50%;
+    transform: translate(-50%, -20%);
+    background-color: white;
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-bottom: 20px;
+    border: 5px solid black;
+    text-align: center;
+    display: none;
+}
+
+#congrats-message {
     color: red;
 }

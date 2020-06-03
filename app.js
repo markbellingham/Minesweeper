@@ -4,9 +4,18 @@ let bombAmount = 20;
 let squares = [];
 let isGameOver = false;
 let flags = 0;
+let startTime = null;
+let timer;
+
+document.getElementById('new-game').addEventListener('click', function() {
+    createBoard();
+    startTime = Math.floor(Date.now() / 1000); //Get the starting time (right now) in seconds
+    timeCounter(startTime, true);
+});
 
 // create board
 function createBoard() {
+    reset();
     // get shuffled game array with random bombs
     const bombsArray = Array(bombAmount).fill('bomb');
     const emptyArray = Array(width*width-bombAmount).fill('valid');
@@ -46,18 +55,24 @@ function createBoard() {
             if(i < 98 && !isRightEdge && squares[i+1].classList.contains('bomb')) total++;
             if(i < 90 && !isLeftEdge && squares[i-1+width].classList.contains('bomb')) total++;
             if(i < 88 && !isRightEdge && squares[i+1+width].classList.contains('bomb')) total++;
-            if(i < 89 && squares[i+width].classList.contains('bomb')) total++;
+            if(i < 90 && squares[i+width].classList.contains('bomb')) total++;
             squares[i].setAttribute('data', total);
-
         }
     }
 }
-createBoard();
+
+function reset() {
+    isGameOver = false;
+    grid.innerHTML = '';
+    squares = [];
+    flags = 0;
+    document.getElementById('no-of-flags').innerText = flags.toString();
+}
 
 // add Flag with right click
 function addFlag(square) {
     if(isGameOver) return;
-    if(!square.classList.contains('checked') && (flags < bombAmount)) {
+    if(!square.classList.contains('checked')) {
         if(!square.classList.contains('flag')) {
             square.classList.add('flag');
             square.innerHTML = '<i class="fas fa-flag"></i>';
@@ -69,6 +84,7 @@ function addFlag(square) {
             flags--;
         }
     }
+    document.getElementById('no-of-flags').innerText = flags.toString();
 }
 
 // click on square actions
@@ -129,7 +145,7 @@ function checkSquare(square, currentId) {
             const newSquare = document.getElementById(newId.toString());
             click(newSquare);
         }
-        if (currentId < 89) {
+        if (currentId < 90) {
             const newId = parseInt(currentId) + width;
             const newSquare = document.getElementById(newId.toString());
             click(newSquare);
@@ -137,8 +153,13 @@ function checkSquare(square, currentId) {
     }, 10);
 }
 
+const gameOverDisplay = document.getElementById('game-over-div');
+const closeBtn = document.querySelectorAll('.close-btn');
+
 function gameOver(square) {
-    console.log('BOOM! Game Over!');
+    clearTimeout(timer);
+    document.getElementById('congrats-message').innerHTML = "BOOM! Game Over!";
+    gameOverDisplay.style.display = 'block';
     isGameOver = true;
 
     // show ALL the bombs
@@ -146,6 +167,7 @@ function gameOver(square) {
         if(square.classList.contains('bomb')) {
             square.innerHTML = '<i class="fas fa-bomb"></i>';
             square.style.color = 'black';
+            square.style.backgroundColor = 'red';
         }
     })
 }
@@ -156,12 +178,23 @@ function checkForWin() {
         if(squares[i].classList.contains('flag') && squares[i].classList.contains('bomb')) {
             matches++;
         }
-        if(matches === bombAmount) {
-            console.log('YOU WIN!');
-            isGameOver = true;
-        }
+    }
+    if(matches === bombAmount) {
+        clearTimeout(timer);
+        document.getElementById('congrats-message').innerHTML = "Congrats! You Win!";
+        gameOverDisplay.style.display = 'block';
+        isGameOver = true;
     }
 }
+
+// close any open modals
+closeBtn.forEach(btn => {
+    btn.addEventListener('click', function() {
+        document.querySelectorAll('.modal').forEach(el => {
+            el.style.display = 'none';
+        });
+    });
+});
 
 function shuffle(a) {
     for(let i = a.length - 1; i > 0; i--) {
@@ -169,4 +202,24 @@ function shuffle(a) {
         [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
+}
+
+function timeCounter(startTime, start) {
+    const now = Math.floor(Date.now() / 1000); // get the time now
+    const diff = now - startTime; // diff in seconds between now and start
+    let m = Math.floor(diff / 60); // get minutes value (quotient of diff)
+    let s = Math.floor(diff % 60); // get seconds value (remainder of diff)
+    m = checkTime(m); // add a leading zero if it's single digit
+    s = checkTime(s); // add a leading zero if it's single digit
+    document.getElementById("timer-display").innerHTML = m + ":" + s; // update the element where the timer will appear
+    if(start) {
+        timer = setTimeout(function() {
+            timeCounter(startTime, true);
+        }, 1000); // set a timeout to update the timer
+    }
+}
+
+function checkTime(i) {
+    if (i < 10) {i = "0" + i}  // add zero in front of numbers < 10
+    return i;
 }
