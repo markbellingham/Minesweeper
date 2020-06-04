@@ -47,6 +47,12 @@ body {
     color: red;
 }
 
+.scores {
+    width: 100px;
+    text-align: right;
+    font-size: 0.9em;
+}
+
 .modal {
     position: absolute;
     top: 20%;

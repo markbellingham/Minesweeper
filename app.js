@@ -1,4 +1,8 @@
 const grid = document.querySelector('.grid');
+const gameOverDisplay = document.getElementById('game-over-div');
+const closeBtn = document.querySelectorAll('.close-btn');
+const topScores = JSON.parse(localStorage.getItem('minesweeper')) || [];
+showTopTimes();
 let width = 10;
 let bombAmount = 20;
 let squares = [];
@@ -153,12 +157,9 @@ function checkSquare(square, currentId) {
     }, 10);
 }
 
-const gameOverDisplay = document.getElementById('game-over-div');
-const closeBtn = document.querySelectorAll('.close-btn');
-
 function gameOver(square) {
     clearTimeout(timer);
-    document.getElementById('congrats-message').innerHTML = "BOOM! Game Over!";
+    document.getElementById('congrats-message').innerHTML = "BOOM! You Lose!";
     gameOverDisplay.style.display = 'block';
     isGameOver = true;
 
@@ -182,9 +183,38 @@ function checkForWin() {
     if(matches === bombAmount) {
         clearTimeout(timer);
         document.getElementById('congrats-message').innerHTML = "Congrats! You Win!";
+        const scoreInfo = {'date': getDate(), 'bombs': bombAmount, 'time': document.getElementById('timer-display').innerHTML};
+        topScores.push(scoreInfo);
+        const position = showTopTimes(scoreInfo);
+        document.querySelector('#congrats-message').innerHTML = position > -1 ? `Congrats! #${position + 1} score!` : '';
         gameOverDisplay.style.display = 'block';
         isGameOver = true;
     }
+}
+
+function getDate() {
+    let date = new Date();
+    date = date.toISOString().split('T')[0];
+    date = date.split('-');
+    date = `${date[2]}-${date[1]}-${date[0]}`;
+    return date;
+}
+
+function showTopTimes(scoreInfo) {
+    topScores.sort(( a, b ) => new Date('1970/1/1 ' + b.time) - new Date('1970/1/1 ' + a.time) );
+    const topFive = topScores.filter((item, index) => index < 5);
+    const index = topFive.findIndex( s => s === scoreInfo );
+    localStorage.minesweeper = JSON.stringify(topFive);
+    let markup = '';
+    topFive.forEach( s => {
+        markup += `
+            <tr>
+                <td class="scores" nowrap="nowrap">${s.date}</td><td class="scores">${s.bombs}</td><td class="scores">${s.time}</td>
+            </tr>
+            `;
+    });
+    document.querySelector('#top-times-tbl').innerHTML = markup;
+    return index;
 }
 
 // close any open modals
