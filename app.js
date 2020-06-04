@@ -17,9 +17,14 @@ document.getElementById('new-game').addEventListener('click', function() {
     timeCounter(startTime, true);
 });
 
+document.getElementById('number-of-bombs').onchange = function() {
+    bombAmount = parseInt(this.value);
+    resetGame();
+};
+
 // create board
 function createBoard() {
-    reset();
+    resetGame();
     // get shuffled game array with random bombs
     const bombsArray = Array(bombAmount).fill('bomb');
     const emptyArray = Array(width*width-bombAmount).fill('valid');
@@ -65,8 +70,9 @@ function createBoard() {
     }
 }
 
-function reset() {
+function resetGame() {
     isGameOver = false;
+    clearTimeout(timer);
     grid.innerHTML = '';
     squares = [];
     flags = 0;
@@ -201,7 +207,7 @@ function getDate() {
 }
 
 function showTopTimes(scoreInfo) {
-    topScores.sort(( a, b ) => new Date('1970/1/1 ' + b.time) - new Date('1970/1/1 ' + a.time) );
+    topScores.sort(( a, b ) => b.bombs - a.bombs || new Date('1970/1/1 ' + b.time) - new Date('1970/1/1 ' + a.time) );
     const topFive = topScores.filter((item, index) => index < 5);
     const index = topFive.findIndex( s => s === scoreInfo );
     localStorage.minesweeper = JSON.stringify(topFive);
