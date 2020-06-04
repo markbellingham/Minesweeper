@@ -12,6 +12,9 @@ let startTime = null;
 let timer;
 
 document.getElementById('new-game').addEventListener('click', function() {
+    document.querySelectorAll('.modal').forEach(el => {
+        el.style.display = 'none';
+    });
     createBoard();
     startTime = Math.floor(Date.now() / 1000); //Get the starting time (right now) in seconds
     timeCounter(startTime, true);
