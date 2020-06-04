@@ -186,7 +186,7 @@ function checkForWin() {
             matches++;
         }
     }
-    if(matches === bombAmount) {
+    if(flags === matches === bombAmount) {
         clearTimeout(timer);
         document.getElementById('congrats-message').innerHTML = "Congrats! You Win!";
         const scoreInfo = {'date': getDate(), 'bombs': bombAmount, 'time': document.getElementById('timer-display').innerHTML};
